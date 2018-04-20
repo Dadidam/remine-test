@@ -94,7 +94,7 @@ class Test extends Component {
     };
 
     render() {
-        const { locations, buildingTypes } = this.state;
+        const { locations } = this.state;
         const filteredLocations = this.applyFilters(locations);
 
         return (
