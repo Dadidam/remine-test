@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
+import TextInput from './components/TextInput';
 import RemineTable from './components/Table/RemineTable/RemineTable';
 import API from './API';
 import settings from './settings';
@@ -41,7 +42,15 @@ class Test extends Component {
 
     onFilterChange = event => {
         const { id, value } = event.target;
-        const newValue = value === '' ? settings[id] : Number(value);
+
+        // cut non-number symbols
+        let newValue = value.replace(/\D/g, '');
+
+        // update input value
+        event.target.value = newValue;
+
+        // prepare new value to set as a part of state
+        newValue = newValue.length ? _.toNumber(newValue) : settings[id];
 
         this.setState({ [id]: newValue });
     };
@@ -54,6 +63,7 @@ class Test extends Component {
             maxBaths,
             selectedTypes
         } = this.state;
+
         return _.filter(this.state.locations, loc => {
             const bedsCond = loc.beds >= minBeds && loc.beds <= maxBeds;
             const bathsCond = loc.baths >= minBaths && loc.baths <= maxBaths;
@@ -103,42 +113,28 @@ class Test extends Component {
                     <form id="filters">
                         <div className="bedsFilter">
                             {'Beds: '}
-                            <input
-                                type="text"
+                            <TextInput
                                 id="minBeds"
-                                size="5"
-                                placeholder="Min"
-                                maxLength="2"
-                                onChange={this.onFilterChange}
+                                isMin={true}
+                                changeHandler={this.onFilterChange}
                             />
                             {' \u2014 '}
-                            <input
-                                type="text"
+                            <TextInput
                                 id="maxBeds"
-                                size="5"
-                                placeholder="Max"
-                                maxLength="2"
-                                onChange={this.onFilterChange}
+                                changeHandler={this.onFilterChange}
                             />
                         </div>
                         <div className="bathsFilter">
                             {'Baths: '}
-                            <input
-                                type="text"
+                            <TextInput
                                 id="minBaths"
-                                size="5"
-                                placeholder="Min"
-                                maxLength="2"
-                                onChange={this.onFilterChange}
+                                isMin={true}
+                                changeHandler={this.onFilterChange}
                             />
                             {' \u2014 '}
-                            <input
-                                type="text"
+                            <TextInput
                                 id="maxBaths"
-                                size="5"
-                                placeholder="Max"
-                                maxLength="2"
-                                onChange={this.onFilterChange}
+                                changeHandler={this.onFilterChange}
                             />
                         </div>
                         <div className="buildingTypesFilter">
