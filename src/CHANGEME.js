@@ -19,11 +19,15 @@ class Test extends Component {
             minBeds,
             maxBeds,
             minBaths,
-            maxBaths
+            maxBaths,
+            showPreloader: false
         };
     }
 
     componentDidMount() {
+        // activate initial action preloading
+        this.activatePreloader();
+
         // fetch locations and buildingTypes from server
         axios
             .all([API.getLocations(), API.getBuildingTypes()])
@@ -31,16 +35,20 @@ class Test extends Component {
                 axios.spread((locations, buildingTypes) => {
                     this.setState({
                         locations: locations.data,
-                        buildingTypes: buildingTypes.data
+                        buildingTypes: buildingTypes.data,
+                        showPreloader: false
                     });
                 })
             )
             .catch(err => {
                 console.error(err);
+                this.setState({ showPreloader: false });
             });
     }
 
     onFilterChange = event => {
+        this.activatePreloader();
+
         const { id, value } = event.target;
 
         // cut non-number symbols
@@ -52,7 +60,9 @@ class Test extends Component {
         // prepare new value to set as a part of state
         newValue = newValue.length ? _.toNumber(newValue) : settings[id];
 
-        this.setState({ [id]: newValue });
+        setTimeout(() => {
+            this.setState({ [id]: newValue, showPreloader: false });
+        }, 100);
     };
 
     applyFilters = () => {
@@ -91,6 +101,8 @@ class Test extends Component {
     };
 
     onCheckboxClick = event => {
+        this.activatePreloader();
+
         const { name, checked } = event.target;
         const activeCheckboxes = [...this.state.selectedTypes];
 
@@ -100,12 +112,24 @@ class Test extends Component {
             _.pull(activeCheckboxes, name);
         }
 
-        this.setState({ selectedTypes: activeCheckboxes });
+        setTimeout(() => {
+            this.setState({
+                selectedTypes: activeCheckboxes,
+                showPreloader: false
+            });
+        }, 100);
+    };
+
+    activatePreloader = () => {
+        this.setState({ showPreloader: true });
     };
 
     render() {
-        const { locations } = this.state;
+        const { locations, showPreloader, buildingTypes } = this.state;
         const filteredLocations = this.applyFilters(locations);
+
+        if (showPreloader && !locations.length && !buildingTypes.length)
+            return <div>Loading...</div>;
 
         return (
             <div className="testContainer">
@@ -143,7 +167,10 @@ class Test extends Component {
                         </div>
                     </form>
                 </div>
-                <RemineTable properties={filteredLocations} />
+                <RemineTable
+                    properties={filteredLocations}
+                    isLoading={showPreloader}
+                />
             </div>
         );
     }

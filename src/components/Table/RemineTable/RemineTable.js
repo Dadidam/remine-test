@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import './RemineTable.css';
 
 class RemineTable extends Component {
-    render() {    
+    render() {
+        const loadingStyle = this.props.isLoading ? 'tableLoadingState' : '';
         return (
-            <div className="tableContainer">
-                <p>Table length: <strong>{this.props.properties.length}</strong></p>
+            <div className={`tableContainer ${loadingStyle}`}>
+                <p>
+                    Table length:{' '}
+                    <strong>{this.props.properties.length}</strong>
+                </p>
                 <table className="remineTable">
                     <thead>
                         <tr>
@@ -17,14 +21,14 @@ class RemineTable extends Component {
                         </tr>
                     </thead>
                     <tbody className="remineTableBody">
-                    {this.props.properties.map(property => (
-                        <tr key={property.id}>
-                            <td>{property.address}</td>
-                            <td>{property.buildingType.name}</td>
-                            <td>{property.beds}</td>
-                            <td>{property.baths}</td>
-                        </tr>
-                    ))}
+                        {this.props.properties.map(property => (
+                            <tr key={property.id}>
+                                <td>{property.address}</td>
+                                <td>{property.buildingType.name}</td>
+                                <td>{property.beds}</td>
+                                <td>{property.baths}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
@@ -34,10 +38,10 @@ class RemineTable extends Component {
 
 RemineTable.defaultProps = {
     properties: []
-}
+};
 
 RemineTable.propTypes = {
     properties: PropTypes.array
-}
+};
 
 export default RemineTable;

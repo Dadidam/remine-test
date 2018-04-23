@@ -1,15 +1,18 @@
 .remineTable {
     width: 100%;
-
 }
-  
+
 .tableContainer {
     margin: auto;
     padding-top: 1em;
     width: 60%;
 }
-  
+
 .remineTableBody {
     overflow-y: scroll;
     max-height: 30vh;
+}
+
+.tableLoadingState {
+    opacity: 0.15;
 }
